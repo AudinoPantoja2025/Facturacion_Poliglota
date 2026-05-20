@@ -1,0 +1,25 @@
+# Python
+env/
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Environment variables
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Docker
+docker-compose.yml

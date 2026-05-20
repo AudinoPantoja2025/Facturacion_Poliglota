@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #1e2a45; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+@layer base {
+  input, select, textarea { @apply outline-none; }
+  input:focus, select:focus, textarea:focus { @apply ring-2 ring-blue-500/40 border-blue-500; }
+}
