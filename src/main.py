@@ -5,6 +5,7 @@ import os
 from flask import Flask, send_from_directory
 
 from src.config import Config
+from dbs.init_all import init_all
 from src.adapters.outbound.persistence.cassandra import CassandraPersonaAdapter
 from src.adapters.outbound.persistence.mongodb import MongoProductoAdapter
 from src.adapters.outbound.persistence.mysql import MySQLFacturaAdapter
@@ -36,6 +37,13 @@ def create_app() -> Flask:
     app.config['FLASK_ENV'] = config.FLASK_ENV
     
     logger.info(f"Inicializando aplicación en modo {config.FLASK_ENV}")
+    
+    # INICIALIZAR BASES DE DATOS DESDE SCRIPTS
+    # =========================================
+    try:
+        init_all(config)
+    except Exception as e:
+        logger.error(f"Error inicializando bases de datos: {e}")
     
     # INICIALIZAR ADAPTADORES (Infraestructura)
     # ===========================================

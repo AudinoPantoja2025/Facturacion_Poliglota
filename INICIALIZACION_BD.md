@@ -1,53 +1,64 @@
 # Inicialización de Bases de Datos
 
-## Cassandra (Personas)
+## Inicio Automático (Recomendado)
+
+Las 4 bases de datos se inicializan **automáticamente** al ejecutar el backend:
 
 ```bash
-cqlsh localhost 9042 -f dbs/cassandra_init.cql
+python run.py
 ```
 
-Verificar:
+Esto ejecuta `dbs/init_all.py` que lee los scripts en `dbs/` y los ejecuta
+usando los drivers Python del proyecto. No requiere `cqlsh`, `mongosh`, `mysql`, ni pegar
+nada en Neo4j Browser.
+
+## Verificación
+
+### Cassandra (Personas) — 10 registros
+
 ```bash
 cqlsh localhost 9042 -e "SELECT COUNT(*) FROM persona.personas;"
-# → 10
 ```
 
-## MongoDB (Productos)
+### MongoDB (Productos) — 15 registros
 
-```bash
-mongosh localhost:27017 < dbs/mongodb_init.js
-```
-
-Verificar:
 ```bash
 mongosh localhost:27017 --eval "db.productos.countDocuments()" productos
-# → 15
 ```
 
-## MySQL (Facturas)
+### MySQL (Facturas) — 5 facturas con detalles
 
 ```bash
-mysql -h localhost -u root -p < dbs/mysql_init.sql
+mysql -h localhost -u root -p -e "SELECT * FROM ventas.factura;"
+mysql -h localhost -u root -p -e "SELECT * FROM ventas.detalle_factura;"
 ```
 
-Verificar:
-```bash
-mysql -h localhost -u root -p -e "SELECT COUNT(*) FROM ventas.factura;"
-# → 5
-```
+### Neo4j (Recomendaciones) — 8 clientes, 8 productos, ~12 compras
 
-## Neo4j (Recomendaciones)
-
-Abrir http://localhost:7484, conectar con `neo4j`/tu_password, pegar todo el contenido de `dbs/neo4j_init.cypher` y ejecutar.
-
-Verificar:
 ```cypher
 MATCH (c:Cliente) RETURN COUNT(c);
 MATCH (p:Producto) RETURN COUNT(p);
 MATCH ()-[r:COMPRO]->() RETURN COUNT(r);
 ```
 
-**Nota**: El script asigna `caption = nombre` automáticamente para que Neo4j Browser muestre los nombres.
+## Inicio Manual (Alternativa)
+
+Si prefieres ejecutar los scripts manualmente:
+
+```bash
+# Cassandra
+cqlsh localhost 9042 -f dbs/cassandra_init.cql
+
+# MongoDB
+mongosh localhost:27017 < dbs/mongodb_init.js
+
+# MySQL
+mysql -h localhost -u root -p < dbs/mysql_init.sql
+
+# Neo4j — pegar dbs/neo4j_init.cypher en http://localhost:7474
+```
+
+**Nota**: El script de Neo4j asigna `caption = nombre` automáticamente para que Neo4j Browser muestre los nombres.
 
 ## Frontend
 

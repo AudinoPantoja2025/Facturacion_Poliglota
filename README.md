@@ -70,26 +70,14 @@ NEO4J_PASSWORD=pwneo4j
 NEO4J_DATABASE=19mayo
 ```
 
-## Inicializar Bases de Datos
-
-```bash
-# Cassandra
-cqlsh localhost 9042 -f dbs/cassandra_init.cql
-
-# MongoDB
-mongosh localhost:27017 < dbs/mongodb_init.js
-
-# MySQL
-mysql -h localhost -u root -p < dbs/mysql_init.sql
-
-# Neo4j (pegar dbs/neo4j_init.cypher en Neo4j Browser http://localhost:7474)
-```
-
 ## Ejecutar
+
+> Las 4 bases de datos se inicializan **automáticamente** al arrancar el backend
+> desde los scripts en `dbs/`. No necesitas ejecutarlos manualmente.
 
 ```bash
 # Terminal 1 - Backend
-python src/main.py            # http://localhost:5000
+python run.py                 # http://localhost:5000
 
 # Terminal 2 - Frontend
 cd frontend
@@ -208,6 +196,25 @@ Respuesta:
 ```
 
 ---
+
+## Inicialización Automática
+
+Al ejecutar `python run.py`, `dbs/init_all.py` lee los 4 scripts y los ejecuta
+usando los mismos drivers Python del proyecto:
+
+| Script | Driver | Qué hace |
+|--------|--------|----------|
+| `dbs/cassandra_init.cql` | `cassandra-driver` | Crea keyspace, tabla, índices y 10 personas |
+| `dbs/mongodb_init.js` | `pymongo` | Crea BD, colección, índices y 15 productos |
+| `dbs/mysql_init.sql` | `mysql-connector-python` | Crea BD, tablas y 5 facturas con detalles |
+| `dbs/neo4j_init.cypher` | `neo4j` | Crea 8 clientes, 8 productos y relaciones COMPRO |
+
+**Idempotencia**: Las sentencias `IF NOT EXISTS` evitan errores si ya existe. Los
+INSERT duplicados se ignoran silenciosamente, así que el script se puede ejecutar
+múltiples veces sin riesgo.
+
+Si necesitas reiniciar los datos de prueba, ejecuta manualmente los scripts de
+limpieza comentados en cada archivo y reinicia el backend.
 
 ## Notas
 
